@@ -12,3 +12,57 @@ const sliderData = [
 
 ]
 
+// Selecting elements for the slider
+const slider = document.querySelector('div.slider')
+const next = document.querySelector('button.next')
+const prev = document.querySelector('button.prev')
+const img = document.querySelector('.slider-wrapper img')
+const p = document.querySelector('.slider-footer p')
+const footer = document.querySelector('.slider-footer')
+
+// Initialize slider index
+let i = 0
+
+// Next button click event
+next.addEventListener('click',function(){
+    i++
+    i = (i >= sliderData.length ? 0 : i) // Loop back to start if index exceeds data length
+    clickRender()
+})
+
+prev.addEventListener('click',function(){
+    i--
+    i = i < 0 ? (sliderData.length - 1) : i  // 小于0 之后转回来。-1 对应的是最后一个对象的索引，也就是数组长度-1
+    clickRender()
+})
+
+function clickRender(){
+    img.src = sliderData[i].url
+    p.innerHTML = sliderData[i].title
+    footer.style.backgroundColor = sliderData[i].color
+    // console.log(sliderData[i].color);
+
+    document.querySelector('.slider-indicator .active').classList.remove('active')  // 移除现有的小圆点      
+    document.querySelector(`.slider-indicator li:nth-child(${i+1})`).classList.add('active')  // 增加小圆点，注意i是从0开始的，所以加1才对
+}
+
+// 自动播放模块
+let timerID = setInterval(function(){
+    // 更好的方法如下，利用JS自动调用点击事件
+    next.click()  // 调用函数
+}, 1000)
+
+
+// 鼠标移入移出事件，通常情况下，应该先关闭定时器，然后再开启。因为之前在开启状态。如果先开再关，可能导致错误。
+slider.addEventListener('mouseenter', function(){
+    clearInterval(timerID)    
+})
+
+slider.addEventListener('mouseleave', function(){
+    timerID = setInterval(function(){        // timerID 要带过来，这样上面关闭的时候才能清除
+    next.click()  // 
+}, 1000)
+
+})
+
+
